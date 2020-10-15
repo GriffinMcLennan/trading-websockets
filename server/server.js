@@ -18,17 +18,24 @@ var sellBook = [];
 
 //routes
 app.post("/", (req, res) => {
-    const { orderType, amount } = req.body;
+    const { orderType, price } = req.body;
+
+    if ((orderType !== "buy" && orderType !== "sell") || price <= 0) {
+        return res.status(400).send("Invalid order parameters");
+    }
 
     //try to fulfill the order
+    if (orderType === "buy") {
+        sellBook.filter((sellOrder) => sellOrder > price);
+    } else if (orderType === "sell") {
+        buyBook.filter((buyOrder) => buyOrder < price);
+    }
 
     //place what's left of the order into the corresponding book.
     if (orderType === "buy") {
         sortedAscendingInsert(buyBook, amount);
     } else if (orderType === "sell") {
         sortedDescendingInsert(sellBook, amount);
-    } else {
-        return res.status(400).send("Invalid order type");
     }
 
     res.send({ buyBook, sellBook });
