@@ -1,12 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import axios from "axios";
+import socketIOClient from "socket.io-client";
 import OrderBook from "./Components/OrderBook";
+
+const ENDPOINT = "http://localhost:5000";
 
 function App() {
     const [price, setPrice] = useState(0);
     const [buyBook, setBuyBook] = useState([]);
     const [sellBook, setSellBook] = useState([]);
+
+    useEffect(() => {
+        const socket = socketIOClient(ENDPOINT);
+        socket.on("FromAPI", (data) => {
+            console.log(data);
+        });
+
+        return () => socket.disconnect();
+    }, []);
 
     const createOrder = async (orderType) => {
         try {

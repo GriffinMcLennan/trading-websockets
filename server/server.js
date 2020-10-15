@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
+const http = require("http").createServer(app);
+const io = require("socket.io")(http);
 const port = 5000;
 
 const {
@@ -41,6 +43,10 @@ app.post("/", (req, res) => {
     res.send({ buyBook, sellBook });
 });
 
-app.listen(port, () => {
+io.on("connection", (socket) => {
+    console.log("a user connected");
+});
+
+http.listen(port, () => {
     console.log(`Listening on port ${port}`);
 });
