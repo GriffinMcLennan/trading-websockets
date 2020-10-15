@@ -14,7 +14,8 @@ function App() {
     useEffect(() => {
         const socket = socketIOClient(ENDPOINT);
         socket.on("FromAPI", (data) => {
-            console.log(data);
+            setBuyBook(data.buyBook);
+            setSellBook(data.sellBook);
         });
 
         return () => socket.disconnect();
@@ -27,8 +28,8 @@ function App() {
                 price: price,
             });
 
-            setBuyBook(response.data.buyBook);
-            setSellBook(response.data.sellBook);
+            //setBuyBook(response.data.buyBook);
+            //setSellBook(response.data.sellBook);
         } catch (err) {
             console.log(err.message);
         }

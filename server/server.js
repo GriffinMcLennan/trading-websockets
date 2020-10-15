@@ -14,6 +14,9 @@ const {
 app.use(express.json());
 app.use(cors());
 
+//socket.io connections
+let connections = new Set();
+
 //trading info
 var buyBook = [];
 var sellBook = [];
@@ -40,11 +43,20 @@ app.post("/", (req, res) => {
         sortedAscendingInsert(sellBook, price);
     }
 
-    res.send({ buyBook, sellBook });
+    io.emit("FromAPI", { sellBook, buyBook });
+
+    res.status(200).send("Successfully handled order");
+    //res.send({ buyBook, sellBook });
 });
 
 io.on("connection", (socket) => {
-    console.log("a user connected");
+    console.log("A client connected to the websocket!");
+    connections.add(socket);
+
+    socket.on("disconnect", () => {
+        console.log("A client disconnected to the websocket!");
+        connections.delete(socket);
+    });
 });
 
 http.listen(port, () => {
