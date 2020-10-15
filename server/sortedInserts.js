@@ -1,35 +1,35 @@
-const sortedAscendingInsert = (list, amount) => {
+const sortedAscendingInsert = (list, price) => {
     let low = 0;
     let high = list.length;
 
     while (low < high) {
-        let mid = low + (high - low) / 2;
+        let mid = low + Math.floor((high - low) / 2);
 
-        if (list[mid] >= amount) {
+        if (list[mid] >= price) {
             high = mid;
         } else {
             low = mid + 1;
         }
     }
 
-    list.splice(low, 0, amount);
+    list.splice(low, 0, price);
 };
 
-const sortedDescendingInsert = (list, amount) => {
+const sortedDescendingInsert = (list, price) => {
     let low = 0;
     let high = list.length;
 
     while (low < high) {
-        let mid = low + (high - low) / 2;
+        let mid = low + Math.floor((high - low) / 2);
 
-        if (list[mid] <= amount) {
+        if (list[mid] <= price) {
             high = mid;
         } else {
             low = mid + 1;
         }
     }
 
-    list.splice(low, 0, amount);
+    list.splice(low, 0, price);
 };
 
 module.exports = { sortedAscendingInsert, sortedDescendingInsert };

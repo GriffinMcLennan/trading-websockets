@@ -1,10 +1,13 @@
 import React from "react";
 import "./OrderBook.css";
 
-function orderBook({ ordersType }) {
+function orderBook({ ordersType, orderData }) {
     return (
         <div className="orderbook">
             <h1>{ordersType}</h1>
+            {orderData.map((order) => (
+                <h3>{order}</h3>
+            ))}
         </div>
     );
 }

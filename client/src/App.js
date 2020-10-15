@@ -4,16 +4,19 @@ import axios from "axios";
 import OrderBook from "./Components/OrderBook";
 
 function App() {
-    const [amount, setAmount] = useState(0);
+    const [price, setPrice] = useState(0);
+    const [buyBook, setBuyBook] = useState([]);
+    const [sellBook, setSellBook] = useState([]);
 
     const createOrder = async (orderType) => {
         try {
             const response = await axios.post("http://localhost:5000", {
                 orderType: orderType,
-                amount: amount,
+                price: price,
             });
 
-            console.log(response);
+            setBuyBook(response.data.buyBook);
+            setSellBook(response.data.sellBook);
         } catch (err) {
             console.log(err.message);
         }
@@ -22,15 +25,15 @@ function App() {
     return (
         <div className="App">
             <input
-                placeholder="amount"
-                onChange={(e) => setAmount(e.target.value)}
+                placeholder="price"
+                onChange={(e) => setPrice(e.target.value)}
             />
             <button onClick={() => createOrder("sell")}>Sell Order</button>
             <button onClick={() => createOrder("buy")}>Buy Order</button>
 
             <div className="orderbooks">
-                <OrderBook ordersType="Buy Book" />
-                <OrderBook ordersType="Sell Book" />
+                <OrderBook ordersType="Buy Book" orderData={buyBook} />
+                <OrderBook ordersType="Sell Book" orderData={sellBook} />
             </div>
         </div>
     );

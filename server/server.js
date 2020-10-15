@@ -26,16 +26,16 @@ app.post("/", (req, res) => {
 
     //try to fulfill the order
     if (orderType === "buy") {
-        sellBook.filter((sellOrder) => sellOrder > price);
+        sellBook = sellBook.filter((sellOrder) => sellOrder > price);
     } else if (orderType === "sell") {
-        buyBook.filter((buyOrder) => buyOrder < price);
+        buyBook = buyBook.filter((buyOrder) => buyOrder < price);
     }
 
     //place what's left of the order into the corresponding book.
     if (orderType === "buy") {
-        sortedAscendingInsert(buyBook, amount);
+        sortedDescendingInsert(buyBook, price);
     } else if (orderType === "sell") {
-        sortedDescendingInsert(sellBook, amount);
+        sortedAscendingInsert(sellBook, price);
     }
 
     res.send({ buyBook, sellBook });
