@@ -18,6 +18,8 @@ function App() {
             setSellBook(data.sellBook);
         });
 
+        //can send our socket info with socket.id
+
         return () => socket.disconnect();
     }, []);
 

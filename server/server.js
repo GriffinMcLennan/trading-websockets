@@ -46,7 +46,6 @@ app.post("/", (req, res) => {
     io.emit("FromAPI", { sellBook, buyBook });
 
     res.status(200).send("Successfully handled order");
-    //res.send({ buyBook, sellBook });
 });
 
 io.on("connection", (socket) => {
