@@ -10,18 +10,27 @@ function App() {
     const [price, setPrice] = useState(0);
     const [buyBook, setBuyBook] = useState([]);
     const [sellBook, setSellBook] = useState([]);
+    const [lastPrice, setLastPrice] = useState(0);
 
     useEffect(() => {
         const socket = socketIOClient(ENDPOINT);
-        socket.on("FromAPI", (data) => {
+        socket.on("OrderBooksUpdate", (data) => {
             setBuyBook(data.publicBuyBook);
             setSellBook(data.publicSellBook);
+        });
+
+        socket.on("LastPriceUpdate", (price) => {
+            setLastPrice(price);
         });
 
         //can send our socket info with socket.id
 
         return () => socket.disconnect();
     }, []);
+
+    useEffect(() => {
+        console.log(lastPrice);
+    }, [lastPrice]);
 
     const createOrder = async (orderType) => {
         try {
@@ -45,6 +54,10 @@ function App() {
                 />
                 <button onClick={() => createOrder("sell")}>Sell Order</button>
                 <button onClick={() => createOrder("buy")}>Buy Order</button>
+            </div>
+
+            <div className="lastprice">
+                <p>Last Price: {lastPrice}</p>
             </div>
 
             <div className="orderbooks">

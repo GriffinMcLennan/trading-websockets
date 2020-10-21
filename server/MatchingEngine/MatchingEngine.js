@@ -18,13 +18,16 @@ class MatchingEngine {
         console.log("buyBook:", buyBook);
         console.log("sellBook:", sellBook);
 
+        let transactions;
+
         if (order.type === "buy") {
-            this.processBuyOrder(order);
+            transactions = this.processBuyOrder(order);
         } else if (order.type === "sell") {
-            this.processSellOrder(order);
+            transactions = this.processSellOrder(order);
         }
 
-        this.socketIO.emit("FromAPI", this.generatePublicOrderBook());
+        this.commitTransactions(transactions);
+        this.socketIO.emit("OrderBooksUpdate", this.generatePublicOrderBook());
     }
 
     processBuyOrder(buyOrder) {
@@ -48,7 +51,8 @@ class MatchingEngine {
                     buyOrder.userUUID,
                     sellOrder.userUUID,
                     amountToTransfer,
-                    sellerProfit
+                    sellerProfit,
+                    buyOrder.price
                 )
             );
 
@@ -68,6 +72,7 @@ class MatchingEngine {
         }
 
         console.log(transactions);
+        return transactions;
     }
 
     processSellOrder(sellOrder) {
@@ -82,9 +87,6 @@ class MatchingEngine {
         ) {
             let buyOrder = buyBook[i];
 
-            console.log(sellOrder.price, buyBook[i].price);
-            console.log(sellOrder.price <= buyBook[i].price);
-
             const amountToTransfer = Math.min(
                 sellOrder.amount,
                 buyOrder.amount
@@ -97,7 +99,8 @@ class MatchingEngine {
                     buyOrder.userUUID,
                     sellOrder.userUUID,
                     amountToTransfer,
-                    sellerProfit
+                    sellerProfit,
+                    sellOrder.price
                 )
             );
 
@@ -117,6 +120,25 @@ class MatchingEngine {
         }
 
         console.log(transactions);
+        return transactions;
+    }
+
+    commitTransactions(transactions) {
+        if (transactions.length === 0) {
+            return;
+        }
+
+        const n = transactions.length;
+        const lastPrice = transactions[n - 1].transactionPrice;
+
+        console.log(lastPrice);
+
+        this.socketIO.emit("LastPriceUpdate", lastPrice);
+
+        //connect to database here
+        /* 
+            await Promise.all(transactions, updateBalances);
+        */
     }
 
     generatePublicOrderBook() {
