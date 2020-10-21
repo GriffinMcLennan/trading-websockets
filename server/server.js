@@ -37,24 +37,6 @@ app.post("/", (req, res) => {
     const order = new Order(uuid, orderType, amount, price);
     ME.processOrder(order);
 
-    /*
-    //try to fulfill the order
-    if (orderType === "buy") {
-        sellBook = sellBook.filter((sellOrder) => sellOrder > price);
-    } else if (orderType === "sell") {
-        buyBook = buyBook.filter((buyOrder) => buyOrder < price);
-    }
-
-    //place what's left of the order into the corresponding book.
-    if (orderType === "buy") {
-        sortedDescendingInsert(buyBook, price);
-    } else if (orderType === "sell") {
-        sortedAscendingInsert(sellBook, price);
-    }
-
-    io.emit("FromAPI", { sellBook, buyBook });
-    */
-
     res.status(200).send("Successfully handled order");
 });
 
