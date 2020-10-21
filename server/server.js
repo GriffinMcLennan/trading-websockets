@@ -61,6 +61,7 @@ app.post("/", (req, res) => {
 io.on("connection", (socket) => {
     console.log("A client connected to the websocket!");
     connections.add(socket);
+    socket.emit("FromAPI", ME.generatePublicOrderBook());
 
     socket.on("disconnect", () => {
         console.log("A client disconnected to the websocket!");

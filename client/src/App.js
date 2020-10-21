@@ -14,7 +14,6 @@ function App() {
     useEffect(() => {
         const socket = socketIOClient(ENDPOINT);
         socket.on("FromAPI", (data) => {
-            //console.log(data);
             setBuyBook(data.returnBuyBook);
             setSellBook(data.returnSellBook);
         });
@@ -33,9 +32,6 @@ function App() {
                 price: parseInt(price),
                 amount: 20,
             });
-
-            //setBuyBook(response.data.buyBook);
-            //setSellBook(response.data.sellBook);
         } catch (err) {
             console.log(err.message);
         }
