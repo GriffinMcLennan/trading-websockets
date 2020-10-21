@@ -7,11 +7,6 @@ const http = require("http").createServer(app);
 const io = require("socket.io")(http);
 const port = 5000;
 
-const {
-    sortedAscendingInsert,
-    sortedDescendingInsert,
-} = require("./sortedInserts");
-
 //middleware
 app.use(express.json());
 app.use(cors());
