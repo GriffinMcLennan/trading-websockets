@@ -25,7 +25,6 @@ function App() {
 
     const createOrder = async (orderType) => {
         try {
-            //backend should be doing the parsing.
             const response = await axios.post("http://localhost:5000", {
                 uuid: 10,
                 orderType: orderType,

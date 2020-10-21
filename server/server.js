@@ -22,6 +22,10 @@ app.post("/", (req, res) => {
     const { uuid, orderType, amount, price } = req.body;
 
     if (
+        typeof uuid !== "number" ||
+        typeof orderType !== "string" ||
+        typeof amount !== "number" ||
+        typeof price !== "number" ||
         (orderType !== "buy" && orderType !== "sell") ||
         price <= 0 ||
         amount <= 0
@@ -41,7 +45,7 @@ io.on("connection", (socket) => {
     socket.emit("FromAPI", ME.generatePublicOrderBook());
 
     socket.on("disconnect", () => {
-        console.log("A client disconnected to the websocket!");
+        console.log("A client disconnected from the websocket!");
         connections.delete(socket);
     });
 });
