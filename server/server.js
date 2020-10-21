@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+const MatchingEngine = require("./MatchingEngine/MatchingEngine");
+const Order = require("./MatchingEngine/Order");
 const app = express();
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
@@ -18,17 +20,24 @@ app.use(cors());
 let connections = new Set();
 
 //trading info
-var buyBook = [];
-var sellBook = [];
+const ME = new MatchingEngine(io);
 
 //routes
 app.post("/", (req, res) => {
-    const { orderType, price } = req.body;
+    const { uuid, orderType, amount, price } = req.body;
 
-    if ((orderType !== "buy" && orderType !== "sell") || price <= 0) {
+    if (
+        (orderType !== "buy" && orderType !== "sell") ||
+        price <= 0 ||
+        amount <= 0
+    ) {
         return res.status(400).send("Invalid order parameters");
     }
 
+    const order = new Order(uuid, orderType, amount, price);
+    ME.processOrder(order);
+
+    /*
     //try to fulfill the order
     if (orderType === "buy") {
         sellBook = sellBook.filter((sellOrder) => sellOrder > price);
@@ -44,6 +53,7 @@ app.post("/", (req, res) => {
     }
 
     io.emit("FromAPI", { sellBook, buyBook });
+    */
 
     res.status(200).send("Successfully handled order");
 });

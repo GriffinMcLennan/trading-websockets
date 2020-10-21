@@ -6,20 +6,25 @@ const Order = require("./Order");
 const Transaction = require("./Transaction");
 
 class MatchingEngine {
-    constructor() {
+    constructor(io) {
         this.buyBook = [];
         this.sellBook = [];
+        this.socketIO = io;
     }
 
     processOrder(order) {
-        console.log("buyBook:", this.buyBook);
-        console.log("sellBook:", this.sellBook);
+        const buyBook = this.buyBook;
+        const sellBook = this.sellBook;
+        console.log("buyBook:", buyBook);
+        console.log("sellBook:", sellBook);
 
         if (order.type === "buy") {
             this.processBuyOrder(order);
         } else if (order.type === "sell") {
             this.processSellOrder(order);
         }
+
+        this.socketIO.emit("FromAPI", this.generatePublicOrderBook());
     }
 
     processBuyOrder(buyOrder) {
@@ -59,7 +64,6 @@ class MatchingEngine {
 
         if (buyOrder.amount > 0) {
             console.log("Inserting Order into buyOrders:", buyOrder);
-            //this.buyBook.push(buyOrder);
             sortedDescendingInsert(this.buyBook, buyOrder);
         }
 
@@ -77,6 +81,9 @@ class MatchingEngine {
             sellOrder.price <= buyBook[i].price
         ) {
             let buyOrder = buyBook[i];
+
+            console.log(sellOrder.price, buyBook[i].price);
+            console.log(sellOrder.price <= buyBook[i].price);
 
             const amountToTransfer = Math.min(
                 sellOrder.amount,
@@ -106,16 +113,33 @@ class MatchingEngine {
 
         if (sellOrder.amount > 0) {
             console.log("Inserting Order into SellOrders:", sellOrder);
-            //this.sellBook.push(sellOrder);
             sortedAscendingInsert(this.sellBook, sellOrder);
         }
 
         console.log(transactions);
     }
+
+    generatePublicOrderBook() {
+        const buyBook = this.buyBook;
+        const sellBook = this.sellBook;
+
+        const returnBuyBook = buyBook.map((order) => ({
+            price: order.price,
+            amount: order.amount,
+        }));
+
+        const returnSellBook = sellBook.map((order) => ({
+            price: order.price,
+            amount: order.amount,
+        }));
+
+        return { returnBuyBook, returnSellBook };
+    }
 }
 
 module.exports = MatchingEngine;
 
+/*
 const ME = new MatchingEngine();
 
 const o1 = new Order(1, "sell", 0.5, 10000);
@@ -129,3 +153,4 @@ ME.processOrder(o2);
 ME.processOrder(o3);
 ME.processOrder(o4);
 console.timeEnd("time");
+*/

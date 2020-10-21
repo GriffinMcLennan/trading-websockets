@@ -14,8 +14,9 @@ function App() {
     useEffect(() => {
         const socket = socketIOClient(ENDPOINT);
         socket.on("FromAPI", (data) => {
-            setBuyBook(data.buyBook);
-            setSellBook(data.sellBook);
+            //console.log(data);
+            setBuyBook(data.returnBuyBook);
+            setSellBook(data.returnSellBook);
         });
 
         //can send our socket info with socket.id
@@ -25,9 +26,12 @@ function App() {
 
     const createOrder = async (orderType) => {
         try {
+            //backend should be doing the parsing.
             const response = await axios.post("http://localhost:5000", {
+                uuid: 10,
                 orderType: orderType,
-                price: price,
+                price: parseInt(price),
+                amount: 20,
             });
 
             //setBuyBook(response.data.buyBook);
@@ -39,12 +43,14 @@ function App() {
 
     return (
         <div className="App">
-            <input
-                placeholder="price"
-                onChange={(e) => setPrice(e.target.value)}
-            />
-            <button onClick={() => createOrder("sell")}>Sell Order</button>
-            <button onClick={() => createOrder("buy")}>Buy Order</button>
+            <div className="order">
+                <input
+                    placeholder="price"
+                    onChange={(e) => setPrice(e.target.value)}
+                />
+                <button onClick={() => createOrder("sell")}>Sell Order</button>
+                <button onClick={() => createOrder("buy")}>Buy Order</button>
+            </div>
 
             <div className="orderbooks">
                 <OrderBook ordersType="Buy Book" orderData={buyBook} />
