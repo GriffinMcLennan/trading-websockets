@@ -123,17 +123,17 @@ class MatchingEngine {
         const buyBook = this.buyBook;
         const sellBook = this.sellBook;
 
-        const returnBuyBook = buyBook.map((order) => ({
+        const publicBuyBook = buyBook.map((order) => ({
             price: order.price,
             amount: order.amount,
         }));
 
-        const returnSellBook = sellBook.map((order) => ({
+        const publicSellBook = sellBook.map((order) => ({
             price: order.price,
             amount: order.amount,
         }));
 
-        return { returnBuyBook, returnSellBook };
+        return { publicBuyBook, publicSellBook };
     }
 }
 

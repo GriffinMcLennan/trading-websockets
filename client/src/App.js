@@ -14,8 +14,8 @@ function App() {
     useEffect(() => {
         const socket = socketIOClient(ENDPOINT);
         socket.on("FromAPI", (data) => {
-            setBuyBook(data.returnBuyBook);
-            setSellBook(data.returnSellBook);
+            setBuyBook(data.publicBuyBook);
+            setSellBook(data.publicSellBook);
         });
 
         //can send our socket info with socket.id
