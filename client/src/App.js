@@ -8,6 +8,7 @@ const ENDPOINT = "http://localhost:5000";
 
 function App() {
     const [price, setPrice] = useState(0);
+    const [amount, setAmount] = useState(0);
     const [buyBook, setBuyBook] = useState([]);
     const [sellBook, setSellBook] = useState([]);
     const [lastPrice, setLastPrice] = useState(0);
@@ -28,17 +29,13 @@ function App() {
         return () => socket.disconnect();
     }, []);
 
-    useEffect(() => {
-        console.log(lastPrice);
-    }, [lastPrice]);
-
     const createOrder = async (orderType) => {
         try {
             const response = await axios.post("http://localhost:5000", {
                 uuid: 10,
                 orderType: orderType,
                 price: parseInt(price),
-                amount: 20,
+                amount: parseInt(amount),
             });
         } catch (err) {
             console.log(err.message);
@@ -51,6 +48,10 @@ function App() {
                 <input
                     placeholder="price"
                     onChange={(e) => setPrice(e.target.value)}
+                />
+                <input
+                    placeholder="amount"
+                    onChange={(e) => setAmount(e.target.value)}
                 />
                 <button onClick={() => createOrder("sell")}>Sell Order</button>
                 <button onClick={() => createOrder("buy")}>Buy Order</button>

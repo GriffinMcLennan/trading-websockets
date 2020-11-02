@@ -30,12 +30,18 @@ app.post("/", (req, res) => {
         price <= 0 ||
         amount <= 0
     ) {
+        console.log(typeof uuid);
+        console.log(typeof orderType);
+        console.log(typeof amount);
+        console.log(typeof price);
+
         return res.status(400).send("Invalid order parameters");
     }
 
+    console.time("time");
     const order = new Order(uuid, orderType, amount, price);
     ME.processOrder(order);
-
+    console.timeEnd("time");
     res.status(200).send("Successfully handled order");
 });
 

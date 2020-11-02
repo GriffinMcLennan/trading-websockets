@@ -10,6 +10,8 @@ class MatchingEngine {
         this.buyBook = [];
         this.sellBook = [];
         this.socketIO = io;
+        this.uidBuyAmounts = new Map();
+        this.uidSellAmounts = new Map();
     }
 
     processOrder(order) {
@@ -130,8 +132,6 @@ class MatchingEngine {
 
         const n = transactions.length;
         const lastPrice = transactions[n - 1].transactionPrice;
-
-        console.log(lastPrice);
 
         this.socketIO.emit("LastPriceUpdate", lastPrice);
 
