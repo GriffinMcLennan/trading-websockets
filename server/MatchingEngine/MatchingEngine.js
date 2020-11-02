@@ -10,8 +10,8 @@ class MatchingEngine {
         this.buyBook = [];
         this.sellBook = [];
         this.socketIO = io;
-        this.uidBuyAmounts = new Map();
-        this.uidSellAmounts = new Map();
+        this.uuidBuyAmounts = new Map();
+        this.uuidSellAmounts = new Map();
     }
 
     processOrder(order) {
@@ -30,6 +30,9 @@ class MatchingEngine {
 
         this.commitTransactions(transactions);
         this.socketIO.emit("OrderBooksUpdate", this.generatePublicOrderBook());
+
+        console.log("BuyMap:", this.uuidBuyAmounts);
+        console.log("SellMap:", this.uuidSellAmounts);
     }
 
     processBuyOrder(buyOrder) {
@@ -68,12 +71,41 @@ class MatchingEngine {
             }
         }
 
+        const uuidBuyAmounts = this.uuidBuyAmounts;
+
         if (buyOrder.amount > 0) {
             console.log("Inserting Order into buyOrders:", buyOrder);
             sortedDescendingInsert(this.buyBook, buyOrder);
+
+            if (uuidBuyAmounts.has(buyOrder.userUUID)) {
+                const curAmount = uuidBuyAmounts.get(buyOrder.userUUID);
+                uuidBuyAmounts.set(
+                    buyOrder.userUUID,
+                    curAmount + buyOrder.amount * buyOrder.price
+                );
+            } else {
+                uuidBuyAmounts.set(
+                    buyOrder.userUUID,
+                    buyOrder.amount * buyOrder.price
+                );
+            }
         }
 
         console.log(transactions);
+        const uuidSellAmounts = this.uuidSellAmounts;
+
+        for (const transaction of transactions) {
+            //close how much they are selling
+            const curAmount = uuidSellAmounts.get(transaction.sellerUUID);
+            const newAmount = curAmount - transaction.buyerAmount;
+
+            if (newAmount !== 0) {
+                uuidSellAmounts.set(transaction.sellerUUID, newAmount);
+            } else {
+                uuidSellAmounts.delete(transaction.sellerUUID);
+            }
+        }
+
         return transactions;
     }
 
@@ -116,12 +148,41 @@ class MatchingEngine {
             }
         }
 
+        const uuidSellAmounts = this.uuidSellAmounts;
+
         if (sellOrder.amount > 0) {
             console.log("Inserting Order into SellOrders:", sellOrder);
             sortedAscendingInsert(this.sellBook, sellOrder);
+
+            //handle amountMap
+            if (uuidSellAmounts.has(sellOrder.userUUID)) {
+                const curAmount = uuidSellAmounts.get(sellOrder.userUUID);
+
+                uuidSellAmounts.set(
+                    sellOrder.userUUID,
+                    curAmount + sellOrder.amount
+                );
+            } else {
+                uuidSellAmounts.set(sellOrder.userUUID, sellOrder.amount);
+            }
         }
 
         console.log(transactions);
+
+        const uuidBuyAmounts = this.uuidBuyAmounts;
+
+        for (const transaction of transactions) {
+            //close how much they are buying
+            const curAmount = uuidBuyAmounts.get(transaction.buyerUUID);
+            const newAmount = curAmount - transaction.sellerProfit;
+
+            if (newAmount !== 0) {
+                uuidBuyAmounts.set(transaction.buyerUUID, newAmount);
+            } else {
+                uuidBuyAmounts.delete(transaction.buyerUUID);
+            }
+        }
+
         return transactions;
     }
 

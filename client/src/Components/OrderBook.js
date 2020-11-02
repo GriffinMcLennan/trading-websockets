@@ -8,7 +8,7 @@ function orderBook({ ordersType, orderData }) {
 
             {orderData.map((order) => (
                 <h3>
-                    {order.amount} {order.price}
+                    {order.price} {order.amount}
                 </h3>
             ))}
         </div>
