@@ -57,6 +57,7 @@ class MatchingEngine {
                     sellOrder.userUUID,
                     amountToTransfer,
                     sellerProfit,
+                    buyOrder.price,
                     buyOrder.price
                 )
             );
@@ -134,7 +135,8 @@ class MatchingEngine {
                     sellOrder.userUUID,
                     amountToTransfer,
                     sellerProfit,
-                    sellOrder.price
+                    sellOrder.price,
+                    buyOrder.price
                 )
             );
 
@@ -174,7 +176,9 @@ class MatchingEngine {
         for (const transaction of transactions) {
             //close how much they are buying
             const curAmount = uuidBuyAmounts.get(transaction.buyerUUID);
-            const newAmount = curAmount - transaction.sellerProfit;
+            const newAmount =
+                curAmount -
+                transaction.originalBuyOrderPrice * transaction.buyerAmount;
 
             if (newAmount !== 0) {
                 uuidBuyAmounts.set(transaction.buyerUUID, newAmount);

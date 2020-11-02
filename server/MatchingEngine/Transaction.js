@@ -4,13 +4,15 @@ class Transaction {
         sellerUUID,
         buyerAmount,
         sellerProfit,
-        transactionPrice
+        transactionPrice,
+        originalBuyOrderPrice
     ) {
         this.buyerUUID = buyerUUID;
         this.sellerUUID = sellerUUID;
         this.buyerAmount = buyerAmount;
         this.sellerProfit = sellerProfit;
         this.transactionPrice = transactionPrice;
+        this.originalBuyOrderPrice = originalBuyOrderPrice;
     }
 }
 

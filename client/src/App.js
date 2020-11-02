@@ -9,6 +9,7 @@ const ENDPOINT = "http://localhost:5000";
 function App() {
     const [price, setPrice] = useState(0);
     const [amount, setAmount] = useState(0);
+    const [uid, setUid] = useState(0);
     const [buyBook, setBuyBook] = useState([]);
     const [sellBook, setSellBook] = useState([]);
     const [lastPrice, setLastPrice] = useState(0);
@@ -32,7 +33,7 @@ function App() {
     const createOrder = async (orderType) => {
         try {
             const response = await axios.post("http://localhost:5000", {
-                uuid: 10,
+                uuid: parseInt(uid),
                 orderType: orderType,
                 price: parseInt(price),
                 amount: parseInt(amount),
@@ -45,6 +46,10 @@ function App() {
     return (
         <div className="App">
             <div className="order">
+                <input
+                    placeholder="uid"
+                    onChange={(e) => setUid(e.target.value)}
+                />
                 <input
                     placeholder="price"
                     onChange={(e) => setPrice(e.target.value)}
